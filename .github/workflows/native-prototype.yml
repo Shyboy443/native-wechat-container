@@ -1,0 +1,59 @@
+name: Native iPhone prototype
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: xcode-27
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '27.2'
+      - name: Inspect toolchain
+        run: xcodebuild -version
+      - name: Compile native prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project LiveContainer.xcodeproj \
+            -scheme LiveContainer \
+            -configuration Release \
+            -sdk iphoneos \
+            -arch arm64 \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Prototype.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            > "$RUNNER_TEMP/native-build.log" 2>&1 || {
+              tail -n 150 "$RUNNER_TEMP/native-build.log"
+              exit 1
+            }
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/package/Payload"
+          ditto "$RUNNER_TEMP/Prototype.xcarchive/Products/Applications/LiveContainer.app" "$RUNNER_TEMP/package/Payload/LiveContainer.app"
+          cd "$RUNNER_TEMP/package"
+          ditto -c -k --keepParent Payload "$RUNNER_TEMP/NativeContainer-unsigned.ipa"
+      - name: Upload unsigned prototype
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-container-unsigned
+          path: ${{ runner.temp }}/NativeContainer-unsigned.ipa
+          retention-days: 7
+      - name: Upload compilation log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-build-log
+          path: ${{ runner.temp }}/native-build.log
+          retention-days: 7

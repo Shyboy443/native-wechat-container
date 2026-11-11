@@ -119,6 +119,18 @@ struct LCAppSettingsView: View {
                     }
                 }
                 if(model.uiContainers.count < SharedModel.keychainAccessGroupCount) {
+                    if appInfo.bundleIdentifier() == "com.tencent.xin" {
+                        Button {
+                            Task {
+                                await createFolder(
+                                    initialDisplayName: "WeChat account \(model.uiContainers.count + 1)",
+                                    isolateAppGroup: true
+                                )
+                            }
+                        } label: {
+                            Label("Add WeChat account profile", systemImage: "person.crop.circle.badge.plus")
+                        }
+                    }
                     Button {
                         Task{ await createFolder() }
                     } label: {
@@ -484,9 +496,9 @@ struct LCAppSettingsView: View {
         }
     }
 
-    func createFolder() async {
+    func createFolder(initialDisplayName: String? = nil, isolateAppGroup: Bool = false) async {
         let newName = NSUUID().uuidString
-        guard let displayName = await renameFolderInput.open(initVal: newName), displayName != "" else {
+        guard let displayName = await renameFolderInput.open(initVal: initialDisplayName ?? newName), displayName != "" else {
             return
         }
         let fm = FileManager()
@@ -506,7 +518,7 @@ struct LCAppSettingsView: View {
         }
         
         sharedModel.appDataFolderNames.append(newName)
-        let newContainer = LCContainer(folderName: newName, name: displayName, isShared: model.uiIsShared)
+        let newContainer = LCContainer(folderName: newName, name: displayName, isShared: model.uiIsShared, isolateAppGroup: isolateAppGroup)
         // assign keychain group
         var keychainGroupSet : Set<Int> = Set(minimumCapacity: 3)
         for i in 0..<SharedModel.keychainAccessGroupCount {
