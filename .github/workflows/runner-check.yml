@@ -1,0 +1,12 @@
+name: Runner availability check
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Confirm job execution
+        run: echo "GitHub Actions runner started successfully"

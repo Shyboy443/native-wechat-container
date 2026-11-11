@@ -7,3 +7,5 @@ packages/
 xcuserdata
 Resources/Frameworks/OpenSSL.framework
 apps_nightly.json
+# Local Python inspection caches
+__pycache__/
