@@ -8,13 +8,13 @@ permissions:
 
 jobs:
   compile:
-    runs-on: xcode-27
+    runs-on: macos-26
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           submodules: recursive
-      - uses: maxim-lobanov/setup-xcode@v1
+      - uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: '27.2'
       - name: Inspect toolchain
@@ -45,14 +45,14 @@ jobs:
           cd "$RUNNER_TEMP/package"
           ditto -c -k --keepParent Payload "$RUNNER_TEMP/NativeContainer-unsigned.ipa"
       - name: Upload unsigned prototype
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: native-container-unsigned
           path: ${{ runner.temp }}/NativeContainer-unsigned.ipa
           retention-days: 7
       - name: Upload compilation log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: native-build-log
           path: ${{ runner.temp }}/native-build.log
