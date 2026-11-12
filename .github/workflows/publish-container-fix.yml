@@ -35,6 +35,7 @@ jobs:
           gh run download "$NATIVE_RUN" -n native-container-unsigned -D package
           gh run download "$WINDOWS_RUN" -n windows-container-installer -D package
           cp research/iloader-fix/INSTALL-WINDOWS.txt package/START-HERE.txt
+          cp research/iloader-fix/ISIDELOAD-LICENSE package/ISIDELOAD-LICENSE
           cd package
           sha256sum AccountContainer-Installer.exe NativeContainer-unsigned.ipa > SHA256SUMS.txt
           zip -j ../AccountContainer-Windows-Setup.zip ./*
