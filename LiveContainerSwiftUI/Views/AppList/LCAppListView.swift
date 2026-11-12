@@ -131,30 +131,33 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 })
                 .hidden()
 
-                if sortedApps.isEmpty && searchContext.query.isEmpty &&
+                if searchContext.query.isEmpty &&
                     !installprogressVisible && sharedModel.multiLCStatus != 2 {
                     VStack(spacing: 14) {
                         Image(systemName: "square.and.arrow.down")
                             .font(.largeTitle)
                             .foregroundStyle(.secondary)
-                        Text("Add your first app")
+                        Text(sortedApps.isEmpty ? "Add your first app" : "Add another app")
                             .font(.title2.bold())
-                        Text(preparedWeChatAvailable
-                             ? "The WeChat package is on this iPhone. Import it to add WeChat here."
-                             : "Choose an IPA file to add an app here.")
+                        Text("Import an IPA, then open the app's settings to add separate account profiles. Compatibility varies by app.")
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
-                        Button {
-                            if preparedWeChatAvailable {
-                                Task { await installFromUrl(urlStr: preparedWeChatURL.absoluteString) }
-                            } else {
-                                choosingIPA = true
+                        ForEach(preparedAppPackages, id: \.fileName) { package in
+                            Button {
+                                Task {
+                                    await installFromUrl(urlStr: LCPath.docPath.appendingPathComponent(package.fileName).absoluteString)
+                                }
+                            } label: {
+                                Label("Import \(package.name)", systemImage: "square.and.arrow.down")
                             }
-                        } label: {
-                            Label(preparedWeChatAvailable ? "Import WeChat" : "Choose IPA File",
-                                  systemImage: "plus")
+                            .buttonStyle(.borderedProminent)
                         }
-                        .buttonStyle(.borderedProminent)
+                        Button {
+                            choosingIPA = true
+                        } label: {
+                            Label("Choose IPA File", systemImage: "plus")
+                        }
+                        .buttonStyle(.bordered)
                     }
                     .padding(28)
                     .frame(maxWidth: .infinity)
@@ -612,12 +615,22 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
         }
     }
 
-    private var preparedWeChatURL: URL {
-        LCPath.docPath.appendingPathComponent("WeChat-8.0.75-candidate.ipa")
+    private struct PreparedAppPackage {
+        let name: String
+        let bundleIdentifier: String
+        let fileName: String
     }
 
-    private var preparedWeChatAvailable: Bool {
-        FileManager.default.isReadableFile(atPath: preparedWeChatURL.path)
+    private var preparedAppPackages: [PreparedAppPackage] {
+        let packages = [
+            PreparedAppPackage(name: "WeChat", bundleIdentifier: "com.tencent.xin", fileName: "WeChat-8.0.75-candidate.ipa"),
+            PreparedAppPackage(name: "WhatsApp", bundleIdentifier: "net.whatsapp.WhatsApp", fileName: "WhatsApp-candidate.ipa")
+        ]
+        let installedBundleIDs = Set((sharedModel.apps + sharedModel.hiddenApps).compactMap { $0.appInfo.bundleIdentifier() })
+        return packages.filter {
+            !installedBundleIDs.contains($0.bundleIdentifier) &&
+            FileManager.default.isReadableFile(atPath: LCPath.docPath.appendingPathComponent($0.fileName).path)
+        }
     }
     
     nonisolated func decompress(_ path: String, _ destination: String ,_ progress: Progress) async -> Int32 {

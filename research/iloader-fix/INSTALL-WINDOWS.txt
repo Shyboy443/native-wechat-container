@@ -15,10 +15,21 @@ Apple Account sign-in and two-factor verification are done by you in the install
 5. In Telegram on the phone, download WeChat from https://t.me/iosrxwy/14320
    and choose Share > Save to Files. In LiveContainer, tap + > Install IPA File
    and select that IPA. If the package was already copied to LiveContainer's
-   Documents folder, tap the large Import WeChat button on the empty Apps tab.
+   Documents folder, tap Import WeChat on the Apps tab.
 6. Test a spare WeChat account first. Then long-press WeChat > Settings >
    Add WeChat account profile. Choose a profile before launching and signing in.
    Test both accounts, close/reopen the app, and confirm each profile stays separate.
+
+WHATSAPP AND OTHER APPS
+Choose IPA File stays visible on the Apps tab. Import each compatible IPA separately.
+Long-press an imported app > Settings > Add [app name] account profile to create
+separate storage. Select the desired profile before launching. This does not guarantee
+that every app supports login or multiple accounts inside LiveContainer.
+If WhatsApp-candidate.ipa was separately copied into the host Documents folder,
+tap Import WhatsApp. If setup gets stuck requesting notifications, long-press
+WhatsApp > Settings > Fix Local Notifications, then try again. This compatibility
+setting does not enable remote push notifications. Test with a spare account.
+Never replace an official installed app or its existing data to add a container guest.
 
 RENEWAL
 Free signing normally lasts seven days. Before the displayed expiry, reconnect to

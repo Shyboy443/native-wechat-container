@@ -45,6 +45,10 @@ struct LCAppSettingsView: View {
         self.appInfo = model.appInfo
         self._model = ObservedObject(wrappedValue: model)
     }
+
+    private var profileAppName: String {
+        appInfo.displayName() ?? "App"
+    }
     
     var body: some View {
         Form {
@@ -120,19 +124,17 @@ struct LCAppSettingsView: View {
                     }
                 }
                 if(model.uiContainers.count < SharedModel.keychainAccessGroupCount) {
-                    if appInfo.bundleIdentifier() == "com.tencent.xin" {
-                        Button {
-                            Task {
-                                await createFolder(
-                                    initialDisplayName: "WeChat account \(model.uiContainers.count + 1)",
-                                    isolateAppGroup: true
-                                )
-                            }
-                        } label: {
-                            Label("Add WeChat account profile", systemImage: "person.crop.circle.badge.plus")
+                    Button {
+                        Task {
+                            await createFolder(
+                                initialDisplayName: "\(profileAppName) account \(model.uiContainers.count + 1)",
+                                isolateAppGroup: true
+                            )
                         }
-                        .disabled(isCreatingContainer)
+                    } label: {
+                        Label("Add \(profileAppName) account profile", systemImage: "person.crop.circle.badge.plus")
                     }
+                    .disabled(isCreatingContainer)
                     Button {
                         Task{ await createFolder() }
                     } label: {
@@ -155,6 +157,8 @@ struct LCAppSettingsView: View {
                 
             } header: {
                 Text("lc.common.container".loc)
+            } footer: {
+                Text("Each profile has separate app data and keychain storage. Account login and switching depend on the imported app. Remote push notifications are unavailable.")
             }
             
             
