@@ -130,6 +130,35 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                         EmptyView()
                 })
                 .hidden()
+
+                if sortedApps.isEmpty && searchContext.query.isEmpty &&
+                    !installprogressVisible && sharedModel.multiLCStatus != 2 {
+                    VStack(spacing: 14) {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.largeTitle)
+                            .foregroundStyle(.secondary)
+                        Text("Add your first app")
+                            .font(.title2.bold())
+                        Text(preparedWeChatAvailable
+                             ? "The WeChat package is on this iPhone. Import it to add WeChat here."
+                             : "Choose an IPA file to add an app here.")
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            if preparedWeChatAvailable {
+                                Task { await installFromUrl(urlStr: preparedWeChatURL.absoluteString) }
+                            } else {
+                                choosingIPA = true
+                            }
+                        } label: {
+                            Label(preparedWeChatAvailable ? "Import WeChat" : "Choose IPA File",
+                                  systemImage: "plus")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding(28)
+                    .frame(maxWidth: .infinity)
+                }
                 
                 LazyVStack {
                     ForEach(filteredApps, id: \.self) { app in
@@ -581,6 +610,14 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
             errorShow = true
             self.installprogressVisible = false
         }
+    }
+
+    private var preparedWeChatURL: URL {
+        LCPath.docPath.appendingPathComponent("WeChat-8.0.75-candidate.ipa")
+    }
+
+    private var preparedWeChatAvailable: Bool {
+        FileManager.default.isReadableFile(atPath: preparedWeChatURL.path)
     }
     
     nonisolated func decompress(_ path: String, _ destination: String ,_ progress: Progress) async -> Int32 {
