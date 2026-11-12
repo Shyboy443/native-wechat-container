@@ -4,9 +4,9 @@ Research date 11 November 2026.
 
 This workspace investigates keeping separate WeChat sessions locally on an iPhone. It contains a native-container source prototype and a read-only IPA inspection tool. It has no compiled iPhone build or verified WeChat session.
 
-The user clarified that every account must receive notifications while the phone is locked and the product should work broadly across iPhones. Upstream's absent remote push support makes this container prototype unsuitable as the final product under those requirements. It is retained as an evaluation result.
+The user subsequently accepted a native-container prototype without locked-screen notifications and authorized continuing the build. Broad iPhone compatibility remains a target to validate against supported iOS versions. Remote push delivery is outside this prototype's scope.
 
-The private research repository is [Shyboy443/native-wechat-lab](https://github.com/Shyboy443/native-wechat-lab). It was created during this task using the authenticated GitHub account. Two manually dispatched macOS build attempts ended with `startup_failure` before jobs or compiler logs were produced. The underlying startup cause remains unresolved. The native Swift change remains uncompiled. No signing credentials were uploaded.
+The private research repository is [Shyboy443/native-wechat-lab](https://github.com/Shyboy443/native-wechat-lab). It was created during this task using the authenticated GitHub account. Manually dispatched native builds and minimal Linux runner checks ended with `startup_failure` before jobs or compiler logs were produced. Both workflow files pass local actionlint validation. Repository Actions permissions are enabled and allow all actions. The underlying startup cause remains unresolved. The native Swift change remains uncompiled. No signing credentials were uploaded.
 
 ## What changed
 
@@ -59,7 +59,7 @@ Record the phone model, iOS version, container build and WeChat build before tes
 | Data and sessions survive switching and reboot | Unverified |
 | Both accounts send and receive while open | Unverified |
 | Relaunch after force-close works | Unverified |
-| Remote notifications while locked | Unsupported by upstream runtime |
+| Remote notifications while locked | Outside the user-approved prototype scope |
 | TestFlight distribution | Unverified and conflicts with documented review restrictions |
 
 For each account, confirm the displayed identity and a unique test conversation. Switch repeatedly and restart the phone. Confirm that neither account inherits the other's login or history. Repeat after force-closing the host and briefly disconnecting the network. App-group separation is a compatibility setting within the host. It does not create an operating-system sandbox between guest apps.
@@ -82,4 +82,4 @@ A 2026 USENIX study documents modified native WeChat binaries with injected comp
 
 An open-source native-container implementation gives us a concrete way to investigate multiple local sessions without the seller's source code. It still depends on an importable WeChat executable, compatible iOS signing and a real-device test. A complete WeChat-compatible client written entirely from scratch has not been implemented or validated here. The earlier claim that the seller's source project was an absolute requirement was too strong.
 
-Meeting the clarified notification requirement requires a different implementation with working messaging and APNs provider integration for each app identity. No inspected source establishes that capability for this prototype. The existing provider's backend would need to deliver notifications for those identities, or a separately implemented provider would need a working event feed. No such integration was built or tested. Broad iPhone support also requires a stated minimum iOS version and device testing. No universal compatibility claim is supported by this investigation.
+The accepted prototype focuses on separate local sessions while open. Notifications while locked would require further work and are outside its scope. Broad iPhone support requires a stated minimum iOS version and device testing. No universal compatibility claim is supported by this investigation.

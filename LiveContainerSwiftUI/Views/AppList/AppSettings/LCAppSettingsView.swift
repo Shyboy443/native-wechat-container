@@ -37,6 +37,7 @@ struct LCAppSettingsView: View {
     @State private var errorShow = false
     @State private var errorInfo = ""
     @State private var selectUnusedContainerSheetShow = false
+    @State private var isCreatingContainer = false
     
     @EnvironmentObject private var sharedModel : SharedModel
     
@@ -130,12 +131,14 @@ struct LCAppSettingsView: View {
                         } label: {
                             Label("Add WeChat account profile", systemImage: "person.crop.circle.badge.plus")
                         }
+                        .disabled(isCreatingContainer)
                     }
                     Button {
                         Task{ await createFolder() }
                     } label: {
                         Text("lc.appSettings.newDataFolder".loc)
                     }
+                    .disabled(isCreatingContainer)
                     Button {
                         choosingStorage = true
                     } label: {
@@ -497,6 +500,12 @@ struct LCAppSettingsView: View {
     }
 
     func createFolder(initialDisplayName: String? = nil, isolateAppGroup: Bool = false) async {
+        guard !isCreatingContainer else {
+            return
+        }
+        isCreatingContainer = true
+        defer { isCreatingContainer = false }
+
         let newName = NSUUID().uuidString
         guard let displayName = await renameFolderInput.open(initVal: initialDisplayName ?? newName), displayName != "" else {
             return
