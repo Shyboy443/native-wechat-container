@@ -73,6 +73,7 @@ def prepare(installer):
     shutil.copyfile(Path(__file__).with_name('certificate_handoff.rs'), tests / 'certificate_handoff.rs')
     with (crate / 'Cargo.toml').open('a', encoding='utf-8') as f:
         f.write('\n[[test]]\nname = "certificate_handoff"\npath = "tests/certificate_handoff.rs"\n')
+        f.write('\n[dev-dependencies.tokio]\nversion = "1.49"\nfeatures = ["macros", "rt-multi-thread"]\n')
     print('Patched pinned isideload 0.5.2; standalone LiveContainer now receives its signing identity.')
 
 
