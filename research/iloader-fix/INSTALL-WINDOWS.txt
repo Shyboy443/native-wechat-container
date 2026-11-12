@@ -1,0 +1,43 @@
+FREE IPHONE SETUP WITHOUT SIDESTORE
+
+This is an unofficial iLoader-based installer and matching LiveContainer prototype.
+No paid Apple Developer membership is needed. A Windows computer, a normal Apple
+Account, Apple USB drivers, and your own unlocked iPhone are required.
+Apple Account sign-in and two-factor verification are done by you in the installer.
+
+1. Connect your iPhone by USB, unlock it, and tap Trust if prompted.
+2. Open AccountContainer-Installer.exe on Windows. Sign in to your Apple Account.
+3. Select your iPhone, click Import IPA, and choose NativeContainer-unsigned.ipa.
+   Do not choose SideStore or LiveContainer+SideStore. Keep extensions if prompted.
+4. On the phone, follow Apple's developer-app trust and Developer Mode prompts.
+   Open LiveContainer. The signing certificate should import automatically.
+   Settings > JIT-Less Mode Diagnose > Test JIT-Less Mode must pass.
+5. In Telegram on the phone, download WeChat from https://t.me/iosrxwy/14320
+   and choose Share > Save to Files. In LiveContainer, tap + and select that IPA.
+6. Test a spare WeChat account first. Then long-press WeChat > Settings >
+   Add WeChat account profile. Choose a profile before launching and signing in.
+   Test both accounts, close/reopen the app, and confirm each profile stays separate.
+
+RENEWAL
+Free signing normally lasts seven days. Before the displayed expiry, reconnect to
+this computer and install the same NativeContainer-unsigned.ipa again using the
+same Apple Account. Keep the existing app installed; do not delete it to renew.
+Check both account sessions after renewal. A new certificate invalidates signatures
+made with the old one, so avoid revoking certificates unless fixing a confirmed error.
+
+STATUS
+Compilation and synthetic certificate checks do not prove iPhone installation,
+WeChat login, reopening, account separation or renewal. These require device tests.
+The third-party WeChat IPA passed local archive/encryption checks, but its authenticity
+and runtime compatibility have not been established. Notifications while locked are outside scope.
+
+SOURCE AND CREDITS
+Our source and reproducible build: https://github.com/Shyboy443/native-wechat-container/tree/prototype
+Official iLoader: https://iloader.app and https://github.com/nab138/iloader
+Official LiveContainer: https://github.com/LiveContainer/LiveContainer
+This modified build is not endorsed by either upstream project.
+LiveContainer is AGPL-3.0; iLoader and isideload are MIT licensed.
+Apple driver/setup guide: https://docs.sidestore.io/docs/installation/prerequisites
+This guide is linked for Windows prerequisites; this package uses standalone installation.
+
+Never publish your signed app copy or certificate. It contains your development signing key.

@@ -1,0 +1,50 @@
+name: Package standalone installation downloads
+on:
+  workflow_dispatch:
+    inputs:
+      native_run:
+        description: Successful native build run ID
+        required: true
+        type: string
+      windows_run:
+        description: Successful Windows build run ID
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Download and package verified build outputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NATIVE_RUN: ${{ inputs.native_run }}
+          WINDOWS_RUN: ${{ inputs.windows_run }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for run in "$NATIVE_RUN" "$WINDOWS_RUN"; do
+            [[ "$run" =~ ^[0-9]+$ ]]
+            test "$(gh run view "$run" --json conclusion --jq .conclusion)" = success
+          done
+          mkdir package
+          gh run download "$NATIVE_RUN" -n native-container-unsigned -D package
+          gh run download "$WINDOWS_RUN" -n windows-container-installer -D package
+          cp research/iloader-fix/INSTALL-WINDOWS.txt package/START-HERE.txt
+          cd package
+          sha256sum AccountContainer-Installer.exe NativeContainer-unsigned.ipa > SHA256SUMS.txt
+          zip -j ../AccountContainer-Windows-Setup.zip ./*
+      - name: Publish unsigned prototypes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create native-prototype-0.2.0 --target "$GITHUB_SHA" \
+            --title 'Standalone iLoader certificate-fix prototype' \
+            --notes-file research/iloader-fix/RELEASE-NOTES.md \
+            AccountContainer-Windows-Setup.zip package/NativeContainer-unsigned.ipa package/SHA256SUMS.txt
