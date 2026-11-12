@@ -18,6 +18,11 @@ struct LCTabView: View {
     @State var shouldToggleMainWindowOpen = false
     @Environment(\.scenePhase) var scenePhase
     @StateObject var downloadHelper = DownloadHelper()
+    @State private var startupChecksFinished = false
+
+    private var canRequestNotifications: Bool {
+        startupChecksFinished && scenePhase == .active && !errorShow && !crashReportShow
+    }
 
     let pub = NotificationCenter.default.publisher(for: UIScene.didDisconnectNotification)
     
@@ -105,6 +110,12 @@ struct LCTabView: View {
                 errorShow = true
             }
             checkPrivateContainerBookmark()
+            startupChecksFinished = true
+        }
+        .task(id: canRequestNotifications) {
+            if canRequestNotifications {
+                await LCNotificationPermission.shared.refresh(requestIfNeeded: true)
+            }
         }
         .onReceive(pub) { out in
             if let scene1 = sceneDelegate.window?.windowScene, let scene2 = out.object as? UIWindowScene, scene1 == scene2 {

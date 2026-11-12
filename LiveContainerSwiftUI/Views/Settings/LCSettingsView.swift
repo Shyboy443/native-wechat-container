@@ -39,6 +39,7 @@ struct LCSettingsView: View {
     @State var successInfo = ""
 
     @State private var certificateDataFound = false
+    @StateObject private var notificationPermission = LCNotificationPermission.shared
     
     @StateObject private var certificateImportAlert = YesNoHelper()
     @StateObject private var certificateImportFromBuiltInSideStoreAlert = YesNoHelper()
@@ -82,6 +83,34 @@ struct LCSettingsView: View {
     var body: some View {
         NavigationView {
             Form {
+                Section {
+                    HStack {
+                        Label("Notifications", systemImage: "bell")
+                        Spacer()
+                        Text(notificationPermission.status == .authorized ? "Allowed" :
+                             notificationPermission.status == .denied ? "Off" :
+                             notificationPermission.status == .provisional ? "Quiet delivery" :
+                             notificationPermission.status == .ephemeral ? "Temporary" : "Not requested")
+                            .foregroundStyle(.secondary)
+                    }
+                    if notificationPermission.status == .denied {
+                        Button("Open Notification Settings") {
+                            notificationPermission.openSettings()
+                        }
+                    } else if notificationPermission.status == .notDetermined || notificationPermission.errorMessage != nil {
+                        Button("Allow Notifications") {
+                            Task { await notificationPermission.refresh(requestIfNeeded: true) }
+                        }
+                        .disabled(notificationPermission.isRequesting)
+                    }
+                    if let message = notificationPermission.errorMessage {
+                        Text(message).foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Permissions")
+                } footer: {
+                    Text("Allow notifications to finish setup in apps such as WhatsApp. Remote push notifications are unavailable. Camera, microphone, contacts, and photos are requested when you use those features. If you previously denied a permission, iOS requires changing it in Settings.")
+                }
                 if sharedModel.multiLCStatus != 2 {
                     Section{
                         if !certificateDataFound {
@@ -444,6 +473,7 @@ struct LCSettingsView: View {
             )
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .task { await notificationPermission.refresh() }
         .onAppear() {
             certificateDataFound = LCUtils.certificateData() != nil
             if !isViewAppeared {

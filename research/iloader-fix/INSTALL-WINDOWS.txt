@@ -12,6 +12,9 @@ Apple Account sign-in and two-factor verification are done by you in the install
 4. On the phone, follow Apple's developer-app trust and Developer Mode prompts.
    Open LiveContainer. The signing certificate should import automatically.
    Settings > JIT-Less Mode Diagnose > Test JIT-Less Mode must pass.
+   On first launch, iOS asks whether to allow LiveContainer notifications. Allow
+   them to avoid permission setup blocking apps such as WhatsApp. If previously
+   denied, use LiveContainer Settings > Permissions > Open Notification Settings.
 5. In Telegram on the phone, download WeChat from https://t.me/iosrxwy/14320
    and choose Share > Save to Files. In LiveContainer, tap + > Install IPA File
    and select that IPA. If the package was already copied to LiveContainer's
@@ -26,10 +29,20 @@ Long-press an imported app > Settings > Add [app name] account profile to create
 separate storage. Select the desired profile before launching. This does not guarantee
 that every app supports login or multiple accounts inside LiveContainer.
 If WhatsApp-candidate.ipa was separately copied into the host Documents folder,
-tap Import WhatsApp. If setup gets stuck requesting notifications, long-press
+tap Import WhatsApp. New WhatsApp imports enable Fix Local Notifications by default.
+If setup gets stuck requesting notifications, long-press
 WhatsApp > Settings > Fix Local Notifications, then try again. This compatibility
 setting does not enable remote push notifications. Test with a spare account.
 Never replace an official installed app or its existing data to add a container guest.
+Camera, microphone, photos, and contacts prompt only when the imported app uses them.
+
+RETURN TO THE APP LIST
+Open the iPhone app switcher, swipe LiveContainer away, and open LiveContainer again.
+
+INVITING OTHER TESTERS
+There is no TestFlight invite or redeem code for this prototype. Share the unsigned
+Windows setup package; each tester installs using their own Apple Account and USB.
+App IPAs are separate dependencies. Never share a tester's signed host or certificate.
 
 RENEWAL
 Free signing normally lasts seven days. Before the displayed expiry, reconnect to

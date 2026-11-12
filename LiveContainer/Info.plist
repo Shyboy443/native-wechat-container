@@ -152,9 +152,9 @@
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>The guest app is requesting for this permission.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>The guest app is requesting for this permission.</string>
+	<string>Apps you open in LiveContainer use the camera to scan QR codes and take photos or videos.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>The guest app is requesting for this permission.</string>
+	<string>Apps you open in LiveContainer can use your contacts to help you find people you know.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>The guest app is requesting for this permission.</string>
 	<key>NSFallDetectionUsageDescription</key>
@@ -184,7 +184,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>The guest app is requesting for this permission.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>The guest app is requesting for this permission.</string>
+	<string>Apps you open in LiveContainer use the microphone for voice messages, calls, and recordings.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>The guest app is requesting for this permission.</string>
 	<key>NSNearbyInteractionAllowOnceUsageDescription</key>
@@ -192,9 +192,9 @@
 	<key>NSNearbyInteractionUsageDescription</key>
 	<string>The guest app is requesting for this permission.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>The guest app is requesting for this permission.</string>
+	<string>Apps you open in LiveContainer can save photos and videos to your library when you choose to save them.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>The guest app is requesting for this permission.</string>
+	<string>Apps you open in LiveContainer can access the photos and videos you choose to share.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>The guest app is requesting for this permission.</string>
 	<key>NSSensorKitUsageDescription</key>

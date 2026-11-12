@@ -775,6 +775,12 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
         } else {
             // enable SDK version spoof by defalut
             finalNewApp.spoofSDKVersion = true
+            // Route local notification permission requests through the installed host.
+            // Preserve the tester's existing choice when replacing an imported app.
+            if ["net.whatsapp.WhatsApp", "net.whatsapp.WhatsAppSMB",
+                "com.fouadraheb.watusi", "com.fouadraheb.watusiSMB"].contains(finalNewApp.bundleIdentifier()) {
+                finalNewApp.fixLocalNotification = true
+            }
         }
         finalNewApp.installationDate = Date.now
         
