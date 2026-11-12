@@ -2,11 +2,13 @@
 
 Research date 11 November 2026.
 
-This workspace investigates keeping separate WeChat sessions locally on an iPhone. It contains a native-container source prototype and a read-only IPA inspection tool. It has no compiled iPhone build or verified WeChat session.
+This workspace investigates keeping separate WeChat sessions locally on an iPhone. It contains a compiled native-container prototype and a read-only IPA inspection tool. The modified native source compiled successfully on 12 November 2026. A WeChat session has not been verified on a physical iPhone.
 
 The user subsequently accepted a native-container prototype without locked-screen notifications and authorized continuing the build. Broad iPhone compatibility remains a target to validate against supported iOS versions. Remote push delivery is outside this prototype's scope.
 
-The private research repository is [Shyboy443/native-wechat-lab](https://github.com/Shyboy443/native-wechat-lab). It was created during this task using the authenticated GitHub account. Manually dispatched native builds and minimal Linux runner checks ended with `startup_failure` before jobs or compiler logs were produced. Both workflow files pass local actionlint validation. Repository Actions permissions are enabled and allow all actions. The underlying startup cause remains unresolved. The native Swift change remains uncompiled. No signing credentials were uploaded.
+The [public build fork](https://github.com/Shyboy443/native-wechat-container/tree/prototype) was created with the user's approval. The private research repository remains [Shyboy443/native-wechat-lab](https://github.com/Shyboy443/native-wechat-lab). After runner access became available, Xcode reported a duplicated architecture/destination argument. Removing the duplicate option fixed that build error. [Build 43184365240](https://github.com/Shyboy443/native-wechat-container/actions/runs/43184365240) completed successfully using Xcode 27.2, packaging an unsigned IPA. No signing credentials were uploaded.
+
+The IPA is in `build/native-run-43184365240/NativeContainer-unsigned.ipa`. Its main executable is arm64 and declares iOS 15.0 minimum. ZIP CRC validation passed, the compiled SwiftUI framework contains the added profile label, and the expected LiveProcess, ShareExtension and LaunchAppExtension bundles are present. These checks establish compilation and packaging. Signing, physical-device launch, WeChat import, login and account persistence remain unverified. Follow [INSTALL.md](INSTALL.md) for the supported signing and test procedure.
 
 ## What changed
 
@@ -35,7 +37,7 @@ python -m unittest -v
 
 ## Build the prototype on a Mac
 
-The development machine used here runs Windows and has no Xcode or iPhone compiler SDK. The native modification has not been compiled. The build script is a prepared macOS build path and remains unverified.
+The local development machine runs Windows. Compilation was performed successfully by GitHub's hosted Xcode 27.2 runner. The local macOS build script remains an alternative path that has not been executed on this Windows machine.
 
 1. Copy this workspace to a Mac with the Xcode version required by the upstream project.
 2. Run `bash build-prototype.sh`.
@@ -53,7 +55,7 @@ Record the phone model, iOS version, container build and WeChat build before tes
 | --- | --- |
 | Source-level account-profile action added | Prepared |
 | IPA inspector handles thin and universal Mach-O headers | Covered by Python tests |
-| Native project compiles | Unverified |
+| Native project compiles | Passed in GitHub build 43184365240 |
 | Guest package imports and launches | Unverified |
 | Account A and account B both log in | Unverified |
 | Data and sessions survive switching and reboot | Unverified |
