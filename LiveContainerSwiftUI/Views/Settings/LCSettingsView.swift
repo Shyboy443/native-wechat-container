@@ -99,7 +99,7 @@ struct LCSettingsView: View {
                         }
                     } else if notificationPermission.status == .notDetermined || notificationPermission.errorMessage != nil {
                         Button("Allow Notifications") {
-                            Task { await notificationPermission.refresh(requestIfNeeded: true) }
+                            Task { await notificationPermission.prepare() }
                         }
                         .disabled(notificationPermission.isRequesting)
                     }
@@ -473,7 +473,6 @@ struct LCSettingsView: View {
             )
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .task { await notificationPermission.refresh() }
         .onAppear() {
             certificateDataFound = LCUtils.certificateData() != nil
             if !isViewAppeared {

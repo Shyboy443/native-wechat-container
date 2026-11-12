@@ -10,14 +10,14 @@ final class LCNotificationPermission: ObservableObject {
     @Published private(set) var isRequesting = false
     @Published private(set) var errorMessage: String?
 
-    func refresh(requestIfNeeded: Bool = false) async {
+    func prepare() async {
         guard !isRequesting else { return }
         isRequesting = true
         defer { isRequesting = false }
 
         let center = UNUserNotificationCenter.current()
         status = await center.notificationSettings().authorizationStatus
-        if requestIfNeeded && status == .notDetermined && UIApplication.shared.applicationState == .active {
+        if status == .notDetermined && UIApplication.shared.applicationState == .active {
             errorMessage = nil
             UserDefaults.standard.set(Date(), forKey: "LCNotificationPermissionRequestDate")
             do {

@@ -114,7 +114,7 @@ struct LCTabView: View {
         }
         .task(id: canRequestNotifications) {
             if canRequestNotifications {
-                await LCNotificationPermission.shared.refresh(requestIfNeeded: true)
+                await LCNotificationPermission.shared.prepare()
             }
         }
         .onReceive(pub) { out in
