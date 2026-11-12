@@ -13,7 +13,9 @@ Apple Account sign-in and two-factor verification are done by you in the install
    Open LiveContainer. The signing certificate should import automatically.
    Settings > JIT-Less Mode Diagnose > Test JIT-Less Mode must pass.
 5. In Telegram on the phone, download WeChat from https://t.me/iosrxwy/14320
-   and choose Share > Save to Files. In LiveContainer, tap + and select that IPA.
+   and choose Share > Save to Files. In LiveContainer, tap + > Install IPA File
+   and select that IPA. If the package was already copied to LiveContainer's
+   Documents folder, tap the large Import WeChat button on the empty Apps tab.
 6. Test a spare WeChat account first. Then long-press WeChat > Settings >
    Add WeChat account profile. Choose a profile before launching and signing in.
    Test both accounts, close/reopen the app, and confirm each profile stays separate.

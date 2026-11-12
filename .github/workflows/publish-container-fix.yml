@@ -2,6 +2,11 @@ name: Package standalone installation downloads
 on:
   workflow_dispatch:
     inputs:
+      release_tag:
+        description: New release tag
+        required: true
+        default: native-prototype-0.3.0
+        type: string
       native_run:
         description: Successful native build run ID
         required: true
@@ -42,10 +47,12 @@ jobs:
       - name: Publish unsigned prototypes
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         shell: bash
         run: |
           set -euo pipefail
-          gh release create native-prototype-0.2.0 --target "$GITHUB_SHA" \
+          [[ "$RELEASE_TAG" =~ ^native-prototype-[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          gh release create "$RELEASE_TAG" --target "$GITHUB_SHA" \
             --title 'Standalone iLoader certificate-fix prototype' \
             --notes-file research/iloader-fix/RELEASE-NOTES.md \
             AccountContainer-Windows-Setup.zip package/NativeContainer-unsigned.ipa package/SHA256SUMS.txt
