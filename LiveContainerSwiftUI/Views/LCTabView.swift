@@ -100,6 +100,10 @@ struct LCTabView: View {
             checkTeamId()
             checkAndSaveBundleId()
             checkGetTaskAllow()
+            if let message = LCUtils.importInstallerCertificate() {
+                errorInfo = message
+                errorShow = true
+            }
             checkPrivateContainerBookmark()
         }
         .onReceive(pub) { out in

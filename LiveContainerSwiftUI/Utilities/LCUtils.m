@@ -6,6 +6,8 @@
 #import <IOKit/IOKitLib.h>
 
 #import "LCUtils.h"
+#import "LCInstallerCertificate.h"
+#import <CommonCrypto/CommonDigest.h>
 #import "../../LiveContainer/LCSharedUtils.h"
 #import "LCAppInfo.h"
 #import "../../MultitaskSupport/DecoratedAppSceneViewController.h"
@@ -22,6 +24,35 @@
 
 @implementation LCUtils
 #pragma mark Certificate & password
+
++ (NSString *)importInstallerCertificate {
+    NSBundle *bundle = NSBundle.mainBundle;
+    id password = bundle.infoDictionary[@"LCInstallerCertificatePassword"];
+    if (!password) return nil; // Other supported installers use their existing setup.
+    if (![password isKindOfClass:NSString.class]) return @"Invalid installer certificate metadata.";
+    NSURL *url = [bundle URLForResource:@"ALTCertificate" withExtension:@"p12"];
+    NSData *data = url ? [NSData dataWithContentsOfURL:url] : nil;
+    NSString *error = LCCheckInstallerIdentity(data, password, LCSharedUtils.teamIdentifier,
+        ^NSString *(NSData *identity, NSString *pass) {
+            return [self getCertTeamIdWithKeyData:identity password:pass];
+        });
+    if (error) return error;
+    unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+    NSData *fingerprint = [NSData dataWithBytes:digest length:sizeof(digest)];
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    if ([[defaults dataForKey:@"LCInstallerCertificateLastImport"] isEqualToData:fingerprint]) return nil;
+    NSString *group = LCSharedUtils.appGroupID;
+    if (!LCSharedUtils.appGroupPath) return @"The installer did not enable this app's shared app group. Reinstall with all extensions kept.";
+    NSUserDefaults *shared = [[NSUserDefaults alloc] initWithSuiteName:group];
+    [shared setObject:data forKey:@"LCCertificateData"];
+    [shared setObject:password forKey:@"LCCertificatePassword"];
+    [shared setObject:NSDate.now forKey:@"LCCertificateUpdateDate"];
+    [defaults setObject:password forKey:@"LCCertificatePassword"];
+    [defaults setObject:group forKey:@"LCAppGroupID"];
+    [defaults setObject:fingerprint forKey:@"LCInstallerCertificateLastImport"];
+    return nil;
+}
 
 + (NSData *)certificateData {
     NSUserDefaults* nud = [[NSUserDefaults alloc] initWithSuiteName:[LCSharedUtils appGroupID]];

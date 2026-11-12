@@ -445,6 +445,7 @@ struct LCSettingsView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
+            certificateDataFound = LCUtils.certificateData() != nil
             if !isViewAppeared {
                 guard sharedModel.selectedTab == .settings, let link = sharedModel.deepLink else { return }
                 sharedModel.deepLink = nil

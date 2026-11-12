@@ -1,0 +1,55 @@
+name: iLoader standalone certificate fix
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: nab138/iloader
+          ref: 9797ecaf6ccdcfc68bd2ef4e0b1123910dd847b6
+          path: installer-build
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: oven-sh/setup-bun@v2
+      - name: Install Windows native build prerequisites
+        run: choco install strawberryperl make --no-progress -y
+      - name: Apply pinned certificate handoff fix
+        run: python research/iloader-fix/prepare.py installer-build
+      - name: Generate synthetic test credentials
+        run: |
+          python -m pip install cryptography
+          python research/iloader-fix/make-fixtures.py "$env:RUNNER_TEMP/cert-fixtures"
+      - name: Test actual installer certificate export
+        env:
+          CERT_FIXTURE_DIR: ${{ runner.temp }}/cert-fixtures
+        run: cargo test --manifest-path isideload-container-fix/Cargo.toml --test certificate_handoff
+      - name: Install frontend dependencies
+        working-directory: installer-build
+        run: bun install --frozen-lockfile
+      - name: Build Windows installer application
+        working-directory: installer-build
+        run: bun run tauri build --no-bundle --config src-tauri/ci.conf.json
+      - name: Package Windows application
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path "$env:RUNNER_TEMP/installer-package" -Force | Out-Null
+          Copy-Item -LiteralPath installer-build/src-tauri/target/release/iloader.exe -Destination "$env:RUNNER_TEMP/installer-package/AccountContainer-Installer.exe"
+          Copy-Item -LiteralPath research/iloader-fix/README.md -Destination "$env:RUNNER_TEMP/installer-package/README.md"
+          Copy-Item -LiteralPath installer-build/LICENSE -Destination "$env:RUNNER_TEMP/installer-package/ILOADER-LICENSE"
+          Copy-Item -LiteralPath installer-build/LICENSE-BRANDING -Destination "$env:RUNNER_TEMP/installer-package/ILOADER-LICENSE-BRANDING"
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: windows-container-installer
+          path: ${{ runner.temp }}/installer-package
+          retention-days: 14
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: synthetic-certificate-fixture
+          path: ${{ runner.temp }}/cert-fixtures/installer.p12
+          retention-days: 1

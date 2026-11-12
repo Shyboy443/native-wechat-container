@@ -19,6 +19,16 @@ jobs:
           xcode-version: '27.2'
       - name: Inspect toolchain
         run: xcodebuild -version
+      - name: Test native certificate validation with synthetic credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/cert-test-venv"
+          "$RUNNER_TEMP/cert-test-venv/bin/pip" install cryptography
+          "$RUNNER_TEMP/cert-test-venv/bin/python" research/iloader-fix/make-fixtures.py "$RUNNER_TEMP/cert-fixtures"
+          clang -fobjc-arc -fblocks -framework Foundation -framework Security \
+            research/iloader-fix/native-certificate-tests.m -o "$RUNNER_TEMP/test-certificate"
+          "$RUNNER_TEMP/test-certificate" "$RUNNER_TEMP/cert-fixtures/native-test.p12"
       - name: Compile native prototype
         shell: bash
         run: |
