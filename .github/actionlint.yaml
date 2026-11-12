@@ -1,0 +1,5 @@
+# GitHub documents this newer hosted runner in actions/runner-images.
+# actionlint 1.7.12 does not yet include the label in its built-in list.
+self-hosted-runner:
+  labels:
+    - xcode-27
